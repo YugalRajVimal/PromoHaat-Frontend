@@ -130,7 +130,7 @@ export default function SignUpPage() {
   }
 
   function handleBackToHome() {
-    window.location.href = "/";
+    window.location.href = "https://promohaat.com";
   }
 
   return (

@@ -74,7 +74,7 @@ export default function AdminSignInPage() {
   }
 
   function handleBackToHome() {
-    window.location.href = "/";
+    window.location.href = "https://promohaat.com";
   }
 
   // No sign up link for admin - admins are created by super admin

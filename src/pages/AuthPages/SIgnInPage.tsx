@@ -71,7 +71,7 @@ export default function AuthPage() {
   }
 
   function handleBackToHome() {
-    window.location.href = "/";
+    window.location.href = "https://promohaat.com";
   }
 
   // Plain <a> for navigation to avoid react-router-dom context error

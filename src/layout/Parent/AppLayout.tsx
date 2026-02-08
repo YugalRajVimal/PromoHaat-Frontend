@@ -4,6 +4,7 @@ import SubAdminAppSidebar from "./AppSidebar";
 import SubAdminBackdrop from "./Backdrop";
 import SubAdminAppHeader from "./AppHeader";
 import { useEffect, useState } from "react";
+import PageMeta from "../../components/common/PageMeta";
 
 // SuperAdmin bar like the pattern seen on Admin/Therapist
 const SuperAdminBanner: React.FC<{
@@ -36,33 +37,39 @@ const LayoutContent: React.FC<{
   const { isExpanded, isHovered, isMobileOpen } = useSidebar();
 
   return (
-    <div
-      className="min-h-screen xl:flex"
-      style={{
-        background: "linear-gradient(135deg, #fdf4cc 0%, #ffe3ef 45%, #ced3f3 100%)",
-      }}
-    >
-      <div>
-        <SubAdminAppSidebar />
-        <SubAdminBackdrop />
-      </div>
+    <>
+      <PageMeta
+        title="PromoHatt"
+        description="Earn with PromoHaat, Promote and Grow."
+      />
       <div
-        className={`flex-1 transition-all duration-300 ease-in-out ${
-          isExpanded || isHovered ? "lg:ml-[290px]" : "lg:ml-[90px]"
-        } ${isMobileOpen ? "ml-0" : ""}`}
+        className="min-h-screen xl:flex"
+        style={{
+          background: "linear-gradient(135deg, #fdf4cc 0%, #ffe3ef 45%, #ced3f3 100%)",
+        }}
       >
-        {isLoggedInViaSuperAdmin && (
-          <SuperAdminBanner
-            superAdminName={superAdminName}
-            superAdminEmail={superAdminEmail}
-          />
-        )}
-        <SubAdminAppHeader />
-        <div className="p-4 mx-auto max-w-(--breakpoint-2xl) md:p-6">
-          <Outlet />
+        <div>
+          <SubAdminAppSidebar />
+          <SubAdminBackdrop />
+        </div>
+        <div
+          className={`flex-1 transition-all duration-300 ease-in-out ${
+            isExpanded || isHovered ? "lg:ml-[290px]" : "lg:ml-[90px]"
+          } ${isMobileOpen ? "ml-0" : ""}`}
+        >
+          {isLoggedInViaSuperAdmin && (
+            <SuperAdminBanner
+              superAdminName={superAdminName}
+              superAdminEmail={superAdminEmail}
+            />
+          )}
+          <SubAdminAppHeader />
+          <div className="p-4 mx-auto max-w-(--breakpoint-2xl) md:p-6">
+            <Outlet />
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
@@ -256,9 +263,15 @@ const ParentAppLayout: React.FC = () => {
 
   if (isParentAuthenticated === null || !isParentAuthenticated) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-white dark:bg-gray-900">
-        <div className="w-40 h-40 border-4 border-t-4 border-gray-200 border-t-brand-500 rounded-full animate-spin"></div>
-      </div>
+      <>
+        <PageMeta
+          title="PromoHatt"
+          description="Earn with PromoHaat, Promote and Grow."
+        />
+        <div className="flex items-center justify-center min-h-screen bg-white dark:bg-gray-900">
+          <div className="w-40 h-40 border-4 border-t-4 border-gray-200 border-t-brand-500 rounded-full animate-spin"></div>
+        </div>
+      </>
     );
   }
 
