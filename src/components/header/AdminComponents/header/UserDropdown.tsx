@@ -117,7 +117,7 @@ export default function UserDropdown() {
         onClose={closeDropdown}
         className="absolute right-0 mt-[17px] flex w-[260px] flex-col rounded-2xl border border-gray-200 bg-white p-3 shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark"
       >
-        <div>
+        {/* <div>
           {loading ? (
             <div className="flex items-center gap-2 py-2">
               <div className="h-6 w-6 border-2 border-t-brand-500 border-gray-200 rounded-full animate-spin" />
@@ -137,7 +137,7 @@ export default function UserDropdown() {
               </span>
             </>
           )}
-        </div>
+        </div> */}
 
         <div
           onClick={handleLogout}

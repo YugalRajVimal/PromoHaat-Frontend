@@ -1,39 +1,44 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { FiPlus, FiEdit, FiTrash, FiX, FiCheck } from "react-icons/fi";
+import { FiEdit, FiX, FiCheck } from "react-icons/fi";
 
-// Set your API base url here for packages
 const API_BASE = import.meta.env.VITE_API_URL
-  ? `${import.meta.env.VITE_API_URL}/api/super-admin/packages`
-  : "/api/super-admin/packages";
+  ? `${import.meta.env.VITE_API_URL}/api/admin/packages`
+  : "/api/admin/packages";
 
 type PackageType = {
   _id: string;
   name: string;
-  sessionCount: number;
-  costPerSession: number;
-  totalCost: number;
-  createdAt?: string;
-  updatedAt?: string;
+  price: number;
+  tasksPerDay: number;
+  taskRate: number;
+  features: string[];
+  bv: number;
 };
+
+function safeCurrency(val: unknown) {
+  const num = typeof val === "number" ? val : Number(val);
+  if (isNaN(num)) return "—";
+  return num.toLocaleString("en-IN", {
+    style: "currency",
+    currency: "INR",
+    maximumFractionDigits: 0,
+  });
+}
 
 export default function PackagesPage() {
   const [packages, setPackages] = useState<PackageType[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // For adding new package
-  const [newPkg, setNewPkg] = useState<{ name: string; sessionCount: string; costPerSession: string }>({
-    name: "",
-    sessionCount: "",
-    costPerSession: "",
-  });
-
   // For editing package
   const [editId, setEditId] = useState<string | null>(null);
-  const [editPkg, setEditPkg] = useState<{ name: string; sessionCount: string; costPerSession: string }>({
+  const [editPkg, setEditPkg] = useState<{ name: string; price: string; tasksPerDay: string; taskRate: string; bv: string; features: string }>({
     name: "",
-    sessionCount: "",
-    costPerSession: "",
+    price: "",
+    tasksPerDay: "",
+    taskRate: "",
+    bv: "",
+    features: ""
   });
 
   const [error, setError] = useState<string | null>(null);
@@ -42,12 +47,12 @@ export default function PackagesPage() {
   // Fetch all packages on mount
   useEffect(() => {
     setLoading(true);
-    fetch(API_BASE + "/", {
+    fetch(API_BASE + "/top3", {
       credentials: "include",
       headers: {
-        "Content-Type": "application/json",
+        "Content-Type": "application/json"
       }
-    })      
+    })
       .then(async (res) => {
         if (!res.ok) {
           const msg = await res.text();
@@ -56,7 +61,6 @@ export default function PackagesPage() {
         return res.json();
       })
       .then((data) => {
-        // Expecting response to look like: { packages: [...] }
         if (Array.isArray(data.packages)) {
           setPackages(data.packages);
         } else if (Array.isArray(data)) {
@@ -69,75 +73,16 @@ export default function PackagesPage() {
       .finally(() => setLoading(false));
   }, []);
 
-  // Add a new package
-  const addPackage = async () => {
-    if (
-      !newPkg.name.trim() ||
-      !newPkg.sessionCount.trim() ||
-      !newPkg.costPerSession.trim()
-    )
-      return;
-    setSubmitting(true);
-    setError(null);
-    try {
-      const sessionCount = Number(newPkg.sessionCount);
-      const costPerSession = Number(newPkg.costPerSession);
-      if (isNaN(sessionCount) || isNaN(costPerSession)) {
-        setError("Session count and cost per session must be numbers");
-        setSubmitting(false);
-        return;
-      }
-      const totalCost = sessionCount * costPerSession;
-      const res = await fetch(API_BASE + "/", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({
-          name: newPkg.name.trim(),
-          sessionCount,
-          costPerSession,
-          totalCost,
-        }),
-      });
-      if (!res.ok) {
-        throw new Error("Failed to add package");
-      }
-      const added = await res.json();
-      // Either return the single created package or { package }
-      const addedPkg = added.package || added;
-      setPackages((prev) => [...prev, addedPkg]);
-      setNewPkg({ name: "", sessionCount: "", costPerSession: "" });
-    } catch (err: any) {
-      setError(err.message || "Could not add package");
-    }
-    setSubmitting(false);
-  };
-
-  // Delete a package by id
-  const deletePackage = async (id: string) => {
-    if (!window.confirm("Delete this package?")) return;
-    setSubmitting(true);
-    setError(null);
-    try {
-      const res = await fetch(`${API_BASE}/${id}`, {
-        method: "DELETE",
-        credentials: "include"
-      });
-      if (!res.ok) throw new Error("Failed to delete package");
-      setPackages((prev) => prev.filter((t) => t._id !== id));
-    } catch (err: any) {
-      setError(err.message || "Could not delete package");
-    }
-    setSubmitting(false);
-  };
-
   // Enable edit mode for a package
   const beginEdit = (pkg: PackageType) => {
     setEditId(pkg._id);
     setEditPkg({
       name: pkg.name,
-      sessionCount: String(pkg.sessionCount),
-      costPerSession: String(pkg.costPerSession),
+      price: String(pkg.price),
+      tasksPerDay: String(pkg.tasksPerDay),
+      taskRate: String(pkg.taskRate),
+      bv: String(pkg.bv),
+      features: (pkg.features || []).join("\n"),
     });
     setError(null);
   };
@@ -145,7 +90,7 @@ export default function PackagesPage() {
   // Cancel inline edit
   const cancelEdit = () => {
     setEditId(null);
-    setEditPkg({ name: "", sessionCount: "", costPerSession: "" });
+    setEditPkg({ name: "", price: "", tasksPerDay: "", taskRate: "", bv: "", features: "" });
     setError(null);
   };
 
@@ -154,31 +99,40 @@ export default function PackagesPage() {
     if (
       !editId ||
       !editPkg.name.trim() ||
-      !editPkg.sessionCount.trim() ||
-      !editPkg.costPerSession.trim()
+      !editPkg.price.trim() ||
+      !editPkg.tasksPerDay.trim() ||
+      !editPkg.taskRate.trim() ||
+      !editPkg.bv.trim()
     ) {
       setError("All fields are required");
       return;
     }
     setSubmitting(true);
     try {
-      const sessionCount = Number(editPkg.sessionCount);
-      const costPerSession = Number(editPkg.costPerSession);
-      if (isNaN(sessionCount) || isNaN(costPerSession)) {
-        setError("Session count and cost per session must be numbers");
+      const price = Number(editPkg.price);
+      const tasksPerDay = Number(editPkg.tasksPerDay);
+      const taskRate = Number(editPkg.taskRate);
+      const bv = Number(editPkg.bv);
+      const features = editPkg.features
+        .split("\n")
+        .map(f => f.trim())
+        .filter(Boolean);
+      if ([price, tasksPerDay, taskRate, bv].some((val) => isNaN(val))) {
+        setError("Price, Tasks Per Day, Task Rate, and BV must be numbers");
         setSubmitting(false);
         return;
       }
-      const totalCost = sessionCount * costPerSession;
       const res = await fetch(`${API_BASE}/${editId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
         body: JSON.stringify({
           name: editPkg.name,
-          sessionCount,
-          costPerSession,
-          totalCost,
+          price,
+          tasksPerDay,
+          taskRate,
+          bv,
+          features,
         }),
       });
       if (!res.ok) throw new Error("Failed to edit package");
@@ -201,57 +155,12 @@ export default function PackagesPage() {
       className="min-h-screen  p-8"
     >
       <h1 className="text-2xl font-bold text-slate-800 mb-6">
-        Therapy Packages
+        Packages
       </h1>
 
-      <div className="bg-white border rounded-lg p-6 mb-6">
-        <div className="flex flex-wrap gap-2">
-          <input
-            value={newPkg.name}
-            onChange={(e) => setNewPkg((p) => ({ ...p, name: e.target.value }))}
-            placeholder="Package name"
-            className="flex-1 min-w-[180px] border rounded px-3 py-2"
-            onKeyDown={e => {
-              if (e.key === "Enter") addPackage();
-            }}
-            disabled={submitting}
-          />
-          <input
-            value={newPkg.sessionCount}
-            onChange={(e) => setNewPkg((p) => ({ ...p, sessionCount: e.target.value }))}
-            placeholder="Session count"
-            className="w-32 border rounded px-3 py-2"
-            type="number"
-            min={1}
-            onKeyDown={e => {
-              if (e.key === "Enter") addPackage();
-            }}
-            disabled={submitting}
-          />
-          <input
-            value={newPkg.costPerSession}
-            onChange={(e) => setNewPkg((p) => ({ ...p, costPerSession: e.target.value }))}
-            placeholder="Cost/session"
-            className="w-32 border rounded px-3 py-2"
-            type="number"
-            min={0}
-            onKeyDown={e => {
-              if (e.key === "Enter") addPackage();
-            }}
-            disabled={submitting}
-          />
-          <button
-            onClick={addPackage}
-            className="flex items-center gap-1 bg-blue-600 text-white px-4 py-2 rounded"
-            disabled={submitting}
-          >
-            <FiPlus /> Add
-          </button>
-        </div>
-        {error && (
-          <div className="mt-2 text-sm text-red-600">{error}</div>
-        )}
-      </div>
+      {error && (
+        <div className="bg-white border rounded-lg p-6 mb-6 mt-2 text-sm text-red-600">{error}</div>
+      )}
 
       <div className="bg-white border rounded-lg overflow-hidden">
         {loading ? (
@@ -261,9 +170,11 @@ export default function PackagesPage() {
             <thead className="bg-slate-100">
               <tr>
                 <th className="px-4 py-3 text-left">Package Name</th>
-                <th className="px-4 py-3 text-right">Session Count</th>
-                <th className="px-4 py-3 text-right">Cost / Session</th>
-                <th className="px-4 py-3 text-right">Total Cost</th>
+                <th className="px-4 py-3 text-right">Price</th>
+                <th className="px-4 py-3 text-right">Tasks/Day</th>
+                <th className="px-4 py-3 text-right">Task Rate</th>
+                <th className="px-4 py-3 text-right">BV</th>
+                <th className="px-4 py-3 text-left">Features</th>
                 <th className="px-4 py-3 text-right">Actions</th>
               </tr>
             </thead>
@@ -271,7 +182,7 @@ export default function PackagesPage() {
               {packages.length === 0 ? (
                 <tr>
                   <td
-                    colSpan={5}
+                    colSpan={7}
                     className="px-4 py-5 text-center text-slate-500"
                   >
                     No packages found.
@@ -298,34 +209,14 @@ export default function PackagesPage() {
                       </td>
                       <td className="px-4 py-3 text-right">
                         <input
-                          value={editPkg.sessionCount}
-                          className="w-20 border rounded px-2 py-1 text-right"
-                          type="number"
-                          min={1}
-                          onChange={e =>
-                            setEditPkg((p) => ({
-                              ...p,
-                              sessionCount: e.target.value,
-                            }))
-                          }
-                          onKeyDown={e => {
-                            if (e.key === "Enter") saveEdit();
-                            if (e.key === "Escape") cancelEdit();
-                          }}
-                          disabled={submitting}
-                          placeholder="Sessions"
-                        />
-                      </td>
-                      <td className="px-4 py-3 text-right">
-                        <input
-                          value={editPkg.costPerSession}
+                          value={editPkg.price}
                           className="w-20 border rounded px-2 py-1 text-right"
                           type="number"
                           min={0}
                           onChange={e =>
                             setEditPkg((p) => ({
                               ...p,
-                              costPerSession: e.target.value,
+                              price: e.target.value,
                             }))
                           }
                           onKeyDown={e => {
@@ -333,11 +224,86 @@ export default function PackagesPage() {
                             if (e.key === "Escape") cancelEdit();
                           }}
                           disabled={submitting}
-                          placeholder="Cost per session"
+                          placeholder="Price"
                         />
                       </td>
                       <td className="px-4 py-3 text-right">
-                        {(Number(editPkg.sessionCount) * Number(editPkg.costPerSession)).toLocaleString("en-IN", { style: 'currency', currency: 'INR', maximumFractionDigits: 0 })}
+                        <input
+                          value={editPkg.tasksPerDay}
+                          className="w-20 border rounded px-2 py-1 text-right"
+                          type="number"
+                          min={0}
+                          onChange={e =>
+                            setEditPkg((p) => ({
+                              ...p,
+                              tasksPerDay: e.target.value,
+                            }))
+                          }
+                          onKeyDown={e => {
+                            if (e.key === "Enter") saveEdit();
+                            if (e.key === "Escape") cancelEdit();
+                          }}
+                          disabled={submitting}
+                          placeholder="Tasks/day"
+                        />
+                      </td>
+                      <td className="px-4 py-3 text-right">
+                        <input
+                          value={editPkg.taskRate}
+                          className="w-20 border rounded px-2 py-1 text-right"
+                          type="number"
+                          min={0}
+                          onChange={e =>
+                            setEditPkg((p) => ({
+                              ...p,
+                              taskRate: e.target.value,
+                            }))
+                          }
+                          onKeyDown={e => {
+                            if (e.key === "Enter") saveEdit();
+                            if (e.key === "Escape") cancelEdit();
+                          }}
+                          disabled={submitting}
+                          placeholder="Task rate"
+                        />
+                      </td>
+                      <td className="px-4 py-3 text-right">
+                        <input
+                          value={editPkg.bv}
+                          className="w-16 border rounded px-2 py-1 text-right"
+                          type="number"
+                          min={0}
+                          onChange={e =>
+                            setEditPkg((p) => ({
+                              ...p,
+                              bv: e.target.value,
+                            }))
+                          }
+                          onKeyDown={e => {
+                            if (e.key === "Enter") saveEdit();
+                            if (e.key === "Escape") cancelEdit();
+                          }}
+                          disabled={submitting}
+                          placeholder="BV"
+                        />
+                      </td>
+                      <td className="px-4 py-3 text-left">
+                        <textarea
+                          value={editPkg.features}
+                          className="w-full border rounded px-2 py-1"
+                          rows={2}
+                          onChange={e =>
+                            setEditPkg((p) => ({
+                              ...p,
+                              features: e.target.value,
+                            }))
+                          }
+                          onKeyDown={e => {
+                            if (e.key === "Escape") cancelEdit();
+                          }}
+                          disabled={submitting}
+                          placeholder="One feature per line"
+                        />
                       </td>
                       <td className="px-4 py-3 text-right space-x-2">
                         <button
@@ -361,12 +327,18 @@ export default function PackagesPage() {
                   ) : (
                     <tr key={pkg._id} className="border-t">
                       <td className="px-4 py-3">{pkg.name}</td>
-                      <td className="px-4 py-3 text-right">{pkg.sessionCount}</td>
-                      <td className="px-4 py-3 text-right">
-                        {pkg.costPerSession.toLocaleString("en-IN", { style: 'currency', currency: 'INR', maximumFractionDigits: 0 })}
-                      </td>
-                      <td className="px-4 py-3 text-right">
-                        {pkg.totalCost.toLocaleString("en-IN", { style: 'currency', currency: 'INR', maximumFractionDigits: 0 })}
+                      <td className="px-4 py-3 text-right">{safeCurrency(pkg.price)}</td>
+                      <td className="px-4 py-3 text-right">{pkg.tasksPerDay}</td>
+                      <td className="px-4 py-3 text-right">{safeCurrency(pkg.taskRate)}</td>
+                      <td className="px-4 py-3 text-right">{pkg.bv}</td>
+                      <td className="px-4 py-3 text-left">
+                        {pkg.features && Array.isArray(pkg.features) && pkg.features.length > 0 ? (
+                          <ul className="list-disc list-inside">
+                            {pkg.features.map((f, fi) => <li key={fi}>{f}</li>)}
+                          </ul>
+                        ) : (
+                          <span className="text-slate-400 text-xs">(None)</span>
+                        )}
                       </td>
                       <td className="px-4 py-3 text-right space-x-2">
                         <button
@@ -375,13 +347,6 @@ export default function PackagesPage() {
                           disabled={submitting}
                         >
                           <FiEdit /> Edit
-                        </button>
-                        <button
-                          onClick={() => deletePackage(pkg._id)}
-                          className="inline-flex items-center gap-1 border border-red-300 text-red-600 px-3 py-1 rounded text-xs"
-                          disabled={submitting}
-                        >
-                          <FiTrash /> Delete
                         </button>
                       </td>
                     </tr>

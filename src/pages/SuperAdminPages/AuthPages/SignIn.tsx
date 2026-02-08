@@ -6,8 +6,8 @@ export default function SignIn() {
   return (
     <>
       <PageMeta
-        title="Nupal CDC"
-        description="Admin and Sub-Admin Panel for Nupal CDC"
+        title="Promo Haat"
+        description="Admin and Sub-Admin Panel for Promo Haat"
       />
       <AuthLayout>
         <SignInForm />

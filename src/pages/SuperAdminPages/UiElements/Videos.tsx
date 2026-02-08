@@ -10,8 +10,8 @@ export default function Videos() {
   return (
     <>
      <PageMeta
-        title="Nupal CDC"
-        description="Admin and Sub-Admin Panel for Nupal CDC"
+        title="Promo Haat"
+        description="Admin and Sub-Admin Panel for Promo Haat"
       />
       <PageBreadcrumb pageTitle="Videos" />
       <div className="grid grid-cols-1 gap-5 sm:gap-6 xl:grid-cols-2">

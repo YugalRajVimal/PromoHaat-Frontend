@@ -7,8 +7,8 @@ export default function BarChart() {
   return (
     <div>
     <PageMeta
-        title="Nupal CDC"
-        description="Admin and Sub-Admin Panel for Nupal CDC"
+        title="Promo Haat"
+        description="Admin and Sub-Admin Panel for Promo Haat"
       />
       <PageBreadcrumb pageTitle="Bar Chart" />
       <div className="space-y-6">

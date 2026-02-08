@@ -15,8 +15,8 @@ export default function FormElements() {
   return (
     <div>
      <PageMeta
-        title="Nupal CDC"
-        description="Admin and Sub-Admin Panel for Nupal CDC"
+        title="Promo Haat"
+        description="Admin and Sub-Admin Panel for Promo Haat"
       />
       <PageBreadcrumb pageTitle="From Elements" />
       <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">

@@ -6,8 +6,8 @@ export default function NotFound() {
   return (
     <>
       <PageMeta
-        title="Nupal CDC"
-        description="Admin and Sub-Admin Panel for Nupal CDC"
+        title="Promo Haat"
+        description="Admin and Sub-Admin Panel for Promo Haat"
       />
       <div className="relative flex flex-col items-center justify-center min-h-screen p-6 overflow-hidden z-1">
         <GridShape />

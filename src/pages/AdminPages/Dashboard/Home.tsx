@@ -107,12 +107,13 @@ export default function AdminDashboardHome() {
   }, []);
 
   return (
-    <>
+    <div className="">
       <PageMeta
-        title="Nupal CDC"
-        description="Admin and Sub-Admin Panel for Nupal CDC"
+        title="Promo Haat"
+        description="Admin and Sub-Admin Panel for Promo Haat"
+        
       />
-      <div className="p-6 min-h-screen">
+      <div className="p-6 h-full">
         {loading ? (
           <div className="flex items-center justify-center min-h-[200px]">
             <div className="w-10 h-10 border-4 border-t-brand-500 border-gray-200 rounded-full animate-spin"></div>
@@ -232,6 +233,6 @@ export default function AdminDashboardHome() {
           </>
         )}
       </div>
-    </>
+    </div>
   );
 }

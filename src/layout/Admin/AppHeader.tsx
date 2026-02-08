@@ -2,8 +2,7 @@ import { useEffect, useRef, useState } from "react";
 
 import { Link } from "react-router";
 import { useSidebar } from "../../context/SidebarContext";
-import { ThemeToggleButton } from "../../components/common/ThemeToggleButton";
-import NotificationDropdown from "../../components/header/NotificationDropdown";
+
 import UserDropdown from "../../components/header/AdminComponents/header/UserDropdown";
 
 const SubAdminAppHeader: React.FC = () => {
@@ -153,9 +152,9 @@ const SubAdminAppHeader: React.FC = () => {
         >
           <div className="flex items-center gap-2 2xsm:gap-3">
             {/* <!-- Dark Mode Toggler --> */}
-            <ThemeToggleButton />
+            {/* <ThemeToggleButton /> */}
             {/* <!-- Dark Mode Toggler --> */}
-            <NotificationDropdown />
+            {/* <NotificationDropdown /> */}
             {/* <!-- Notification Menu Area --> */}
           </div>
           {/* <!-- User Area --> */}

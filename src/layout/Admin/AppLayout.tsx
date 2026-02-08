@@ -3,7 +3,9 @@ import { Outlet } from "react-router";
 import SubAdminAppSidebar from "./AppSidebar";
 import SubAdminBackdrop from "./Backdrop";
 import { useEffect, useState } from "react";
-import AdminHeader from "../../pages/AdminPages/AdminHeader/AdminHeader";
+import SubAdminAppHeader from "./AppHeader";
+
+
 
 const LayoutContent: React.FC<{
   superAdminName?: string;
@@ -14,20 +16,21 @@ const LayoutContent: React.FC<{
 
   return (
     <div
-      className="min-h-screen xl:flex"
+      className="h-screen overflow-hidden"
       style={{
         background: "linear-gradient(135deg, #fdf4cc 0%, #ffe3ef 45%, #ced3f3 100%)",
       }}
+
     >
       <div>
         <SubAdminAppSidebar />
         <SubAdminBackdrop />
       </div>
       <div
-        className={`transition-all duration-300 ease-in-out ${
+        className={`transition-all duration-300 ease-in-out h-full ${
           isExpanded || isHovered ? "lg:ml-[290px]" : "lg:ml-[90px]"
         } ${isMobileOpen ? "ml-0" : ""}`}
-        style={{ width: "100%" }}
+        // style={{ width: "100%" }}
       >
         {isLoggedInViaSuperAdmin && (
           <div className="bg-yellow-100 text-yellow-900 text-xs px-3 py-2 rounded-b shadow mb-2 flex items-center gap-2 border-b border-yellow-200">
@@ -45,8 +48,8 @@ const LayoutContent: React.FC<{
             )}
           </div>
         )}
-        <AdminHeader />
-        <div className="p-4 mx-auto w-full md:p-6">
+        <SubAdminAppHeader />
+        <div className="p-4 mx-auto w-full h-full md:p-6">
           <Outlet />
         </div>
       </div>
@@ -67,7 +70,7 @@ const SubAdminAppLayout: React.FC = () => {
         if (!token) {
           setIsAdminAuthenticated(false);
           if (window.location.pathname.startsWith("/admin")) {
-            window.location.href = "/signin";
+            window.location.href = "/admin/signin";
           }
           return;
         }
@@ -77,7 +80,7 @@ const SubAdminAppLayout: React.FC = () => {
         setIsLoggedInViaSuperAdmin(isViaSuperAdmin);
 
         const res = await fetch(
-          `${import.meta.env.VITE_API_URL}/api/auth/`,
+          `${import.meta.env.VITE_API_URL}/api/auth/admin/check-auth/`,
           {
             method: "POST",
             headers: {
@@ -96,16 +99,16 @@ const SubAdminAppLayout: React.FC = () => {
             setSuperAdminName(data.name);
             setSuperAdminEmail(data.email);
           }
-          if (window.location.pathname === "/signin") {
+          if (window.location.pathname === "/admin/signin") {
             window.location.href = "/admin";
           }
         } else {
           setIsAdminAuthenticated(false);
-          window.location.href = "/signin";
+          window.location.href = "/admin/signin";
         }
       } catch (err) {
         setIsAdminAuthenticated(false);
-        window.location.href = "/signin";
+        window.location.href = "/admin/signin";
       }
     };
 

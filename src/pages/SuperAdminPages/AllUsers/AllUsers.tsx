@@ -476,7 +476,7 @@ const AllUsers: React.FC<AllUsersProps> = () => {
         params.role = activeRole; // here, send patients, therapist, admin or all as role, per controller convention
         if (search) params.search = search;
 
-        const res = await axios.get(`${API_BASE}/api/super-admin/users`, {
+        const res = await axios.get(`${API_BASE}/api/admin/users`, {
           params,
           signal: controller.signal,
         });

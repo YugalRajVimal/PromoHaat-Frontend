@@ -7,8 +7,8 @@ export default function SupervisorSignIn() {
   return (
     <>
       <PageMeta
-        title="Nupal CDC"
-        description="Admin and Sub-Admin Panel for Nupal CDC"
+        title="Promo Haat"
+        description="Admin and Sub-Admin Panel for Promo Haat"
       />
       <SupervisorAuthLayout>
         <SupervisorSignInForm />

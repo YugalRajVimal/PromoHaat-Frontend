@@ -24,96 +24,45 @@ type NavItem = {
 const navItems: NavItem[] = [
   {
     icon: <GridIcon />,
-    name: "Overview",
+    name: "Dashboard",
     path: "/admin",
   },
   {
     icon: <UserIcon />,
-    name: "Reception Desk",
-    path: "/admin/reception-desk",
-  },
-  {
-    icon: <FileIcon />,
-    name: "Leads & Consults",
-    path: "/admin/leads-consults",
-  },
-  // {
-  //   icon: <FileIcon />,
-  //   name: "Reports & Analytics",
-  //   path: "/admin/reports-analytics",
-  // },
-  {
-    icon: <FileIcon />,
-    name: "Full Calendar",
-    path: "/admin/full-calendar",
-  },
-  {
-    icon: <FileIcon />,
-    name: "Bookings",
-    path: "/admin/bookings",
-  },
-  {
-    icon: <FileIcon />,
-    name: "Booking Requests",
-    path: "/admin/booking-requests",
-  },
-  {
-    icon: <FileIcon />,
-    name: "Session Edit Requests",
-    path: "/admin/session-edit-requests",
+    name: "All Users",
+    path: "/admin/all-users",
   },
   {
     icon: <UserCircleIcon />,
-    name: "Therapists",
-    path: "/admin/therapists",
+    name: "User Tree",
+    path: "/admin/user-tree/me",
+  },
+
+  {
+    icon: <FileIcon />,
+    name: "Manage Packages",
+    path: "/admin/manage-packages",
   },
   {
-    icon: <UserIcon />,
-    name: "Childrens",
-    path: "/admin/children",
+    icon: <FileIcon />,
+    name: "Manage Task",
+    path: "/admin/manage-task",
   },
+  {
+    icon: <FileIcon />,
+    name: "Manage Rewards",
+    path: "/admin/manage-rewards",
+  },
+  // {
+  //   icon: <UserIcon />,
+  //   name: "Profile",
+  //   path: "/admin/profile",
+  // },
   {
     icon: <FileIcon />,
     name: "Finances",
     path: "/admin/finances",
   },
-  {
-    icon: <FileIcon />,
-    name: "Manage Holidays",
-    path: "/admin/manage-holidays",
-  },
-  {
-    icon: <UserIcon />,
-    name: "Admin Profile",
-    path: "/admin/profile",
-  },
-  // LOGOUT REMOVED FROM navItems - see below!
-  // {
-  //   icon: <UserIcon />,
-  //   name: "Logout",
-  //   path: "/admin/logout",
-  // },
-  // {
-  //   icon: <ChevronDownIcon />,
-  //   name: "Therapy Types",
-  //   path: "/admin/therapy-types",
-  // },
-  // {
-  //   icon: <FileIcon />,
-  //   name: "Packages",
-  //   path: "/admin/packages",
-  // },
-  // {
-  //   icon: <FileIcon />,
-  //   name: "Discounts",
-  //   path: "/admin/discounts",
-  // },
-
-  // {
-  //   icon: <FileIcon />,
-  //   name: "Manage Therapist Availability",
-  //   path: "/admin/manage-availability",
-  // },
 ];
 
 // Logout nav item for the red button at the bottom
@@ -396,21 +345,34 @@ const SubAdminAppSidebar: React.FC = () => {
       >
         <Link to="/">
           {isExpanded || isHovered || isMobileOpen ? (
-            <>
-             <img
-              src="/logo.webp"
-              alt="Logo"
-            className="w-full"
-            />
-              {/* <span className="text-3xl font-bold">ADMIN</span> */}
-            </>
+             <span className="flex items-center gap-2 select-none">
+             <span
+               style={{
+                 color: "#11181c",
+                 fontWeight: 800,
+                 fontSize: "2rem",
+                 letterSpacing: "0.05em",
+                 lineHeight: 1,
+               }}
+               className="font-extrabold tracking-wide uppercase"
+             >
+               Promo
+             </span>
+             <span
+               style={{
+                 color: "#11181c",
+                 fontWeight: 700,
+                 fontSize: "2rem",
+                 letterSpacing: "0.07em",
+                 lineHeight: 1,
+               }}
+               className="font-bold tracking-widest uppercase"
+             >
+               Haat
+             </span>
+           </span>
           ) : (
-            <img
-              src="/logo.webp"
-              alt="Logo"
-              className="w-full"
-
-            />
+            <></>
             // <span className="text-xl font-bold">ADMIN</span>
           )}
         </Link>

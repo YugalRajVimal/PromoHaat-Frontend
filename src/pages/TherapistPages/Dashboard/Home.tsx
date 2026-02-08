@@ -108,7 +108,7 @@ export default function TherapistDashboardHome() {
 
   return (
     <>
-      <PageMeta title="Nupal CDC" description="Therapist Dashboard" />
+      <PageMeta title="Promo Haat" description="Therapist Dashboard" />
 
       <div className="max-w-7xl mx-auto px-4 py-6">
         {/* Header */}

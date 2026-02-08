@@ -148,6 +148,38 @@ const ParentAppLayout: React.FC = () => {
           return;
         }
 
+        // If KYC is pending (status 429): redirect to /user/kyc-pending
+        if (res.status === 429) {
+          setIsParentAuthenticated(false);
+          let data = {};
+          try {
+            data = await res.json();
+          } catch (e) {
+            data = {};
+          }
+          let name = "";
+          let email = "";
+          let kycStatus = "";
+          let message = "";
+          if (data && typeof data === "object") {
+            message = (data as any).message || "";
+            name = (data as any).name || "";
+            email = (data as any).email || "";
+            kycStatus = (data as any).kycStatus || "";
+          }
+          let redirectUrl = "/kyc-pending";
+          if (message || name || email || kycStatus) {
+            const params = new URLSearchParams({});
+            if (message) params.set("message", message);
+            if (kycStatus) params.set("kycStatus", kycStatus);
+            if (name) params.set("name", name);
+            if (email) params.set("email", email);
+            redirectUrl += "?" + params.toString();
+          }
+          window.location.href = redirectUrl;
+          return;
+        }
+
         // Package not purchased or expired (status 426): redirect to /user/packages
         if (res.status === 426) {
           setIsParentAuthenticated(false);
